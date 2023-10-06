@@ -12,10 +12,9 @@ import {
   Paper,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useState } from 'react';
+import React from 'react';
 
 export default function DictionaryDialog({dictionary, openDialog, setOpenDialog}) {
-  // const [openDialog, setOpenDialog] = useStateFn(false);
 
   return (
     <Dialog

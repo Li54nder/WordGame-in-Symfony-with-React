@@ -53,7 +53,7 @@ class WordController extends AbstractController
       $word = $content->word;
       $found = (bool) $this->wordRepository->findByWord($word);
 
-      if($found) {
+      if ($found) {
         $score = $this->scoreWord($word);
         return $this->json([
           'word' => $word,
@@ -64,9 +64,6 @@ class WordController extends AbstractController
       }
     } catch (\Throwable $e) {
       $statusCode = $e->getCode() ?: 500;
-      // dump($e);
-      // echo $e;
-      $statusCode = $statusCode == 7? 500 : $statusCode;
       return $this->json(['msg' => $e->getMessage()], $statusCode);
     }
   }

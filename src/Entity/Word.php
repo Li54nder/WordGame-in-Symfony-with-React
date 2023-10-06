@@ -21,7 +21,7 @@ class Word
      */
     private $word;
 
-    public function getId(): ?int 
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -37,7 +37,7 @@ class Word
         return $this;
     }
 
-    public function toArray() 
+    public function toArray()
     {
         return ['id' => $this->id, 'word' => $this->word];
     }

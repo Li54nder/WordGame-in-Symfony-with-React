@@ -9,11 +9,17 @@ class CheckWordApiTest extends WebTestCase
 {
     public function testCheckWordEndpoint(): void
     {
+        // This word needs to exist in the DB
+        $word_for_test = "test";
+        // Score for this word needs to be  5 
+        // (t, e, s = 3 (+2 because of "almost palindrome" [test -> tet]))
+        $expected_score = 5;
+
         $client = static::createClient();
         $client->catchExceptions(false);
-        
+
         $requestData = [
-            'word' => 'test', // This word must exist in the DB
+            'word' => $word_for_test
         ];
 
         $client->request(
@@ -24,7 +30,7 @@ class CheckWordApiTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode($requestData)
         );
-        
+
         $response = $client->getResponse();
 
         // Check the HTTP status code
@@ -33,5 +39,7 @@ class CheckWordApiTest extends WebTestCase
         // Assert that the response structure and data are as expected
         $this->assertArrayHasKey('word', $data);
         $this->assertArrayHasKey('score', $data);
+
+        $this->assertSame($expected_score, $data['score']);
     }
 }

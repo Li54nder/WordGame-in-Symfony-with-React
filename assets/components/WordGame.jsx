@@ -25,7 +25,6 @@ export default function WordGame() {
       const response = await axios.get('/api/readAllWords');
       setDictionary(response.data);
     } catch (error) {
-      console.error(error);
       setDictionary([]);
     }
   };
