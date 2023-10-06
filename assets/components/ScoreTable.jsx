@@ -23,7 +23,7 @@ export default function ScoreTable() {
           {context.words.map((item, i) => (
             <TableRow key={i}>
               <TableCell>{item.word}</TableCell>
-              <TableCell align='center'>{item.score}</TableCell>
+              <TableCell id={`score${context.words.length - i}`} align='center'>{item.score}</TableCell>
             </TableRow>
           ))}
         </TableBody>

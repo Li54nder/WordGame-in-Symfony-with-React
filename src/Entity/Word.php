@@ -21,6 +21,25 @@ class Word
      */
     private $word;
 
-    // Getter and Setter methods for $word and $score go here
+    public function getId(): ?int 
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->word;
+    }
+
+    public function setName(string $word): self
+    {
+        $this->word = $word;
+        return $this;
+    }
+
+    public function toArray() 
+    {
+        return ['id' => $this->id, 'word' => $this->word];
+    }
 }
 ?>
