@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\WordRepository;
+use App\Service\WordScorerService;
 
 /**
  * @Route("/api", name="api")
@@ -16,11 +17,13 @@ class WordController extends AbstractController
 
   private $entityManager;
   private $wordRepository;
+  private $wordScorerService;
 
-  public function __construct(EntityManagerInterface $entityManager, WordRepository $wordRepository)
+  public function __construct(EntityManagerInterface $entityManager, WordRepository $wordRepository, WordScorerService $wordScorerService)
   {
     $this->entityManager = $entityManager;
     $this->wordRepository = $wordRepository;
+    $this->wordScorerService = $wordScorerService;
   }
 
   /**
@@ -29,19 +32,14 @@ class WordController extends AbstractController
    */
   public function readAllWords()
   {
-    $words = $this->wordRepository->findAll();
-    $arrayOfWords = [];
-    foreach ($words as $word) {
-      $arrayOfWords[] = $word->toArray();
-    }
-    return $this->json($arrayOfWords);
+    return $this->json($this->wordRepository->findAll());
   }
 
   /**
    * @Route("/checkWord", name="api_checkWord")
    * @return JsonResponse
    */
-  public function testWord(Request $request)
+  public function checkWord(Request $request)
   {
     try {
       $content = json_decode($request->getContent());
@@ -54,7 +52,7 @@ class WordController extends AbstractController
       $found = (bool) $this->wordRepository->findByWord($word);
 
       if ($found) {
-        $score = $this->scoreWord($word);
+        $score = $this->wordScorerService->scoreWord($word);
         return $this->json([
           'word' => $word,
           'score' => $score
@@ -66,36 +64,6 @@ class WordController extends AbstractController
       $statusCode = $e->getCode() ?: 500;
       return $this->json(['msg' => $e->getMessage()], $statusCode);
     }
-  }
-
-  private function scoreWord($word)
-  {
-    $isPalindrome = true;
-    $isAlmostPalindrome = true;
-    $tryInOtherDirection = false;
-    $letters = [];
-    $i = 0;
-
-    for ($j = 0; $j < strlen($word); $j++) {
-      $i++;
-      $letter = $word[$j];
-      $letters[$letter] = true;
-
-      if ($isPalindrome && ($i - 1) < (strlen($word) / 2) && $letter !== $word[strlen($word) - $i]) {
-        $isPalindrome = false;
-        $i++;
-      }
-
-      if (!$isPalindrome && $isAlmostPalindrome && ($i - 1) <= (strlen($word) / 2) && $letter !== $word[strlen($word) - $i]) {
-        if ($tryInOtherDirection) {
-          $isAlmostPalindrome = false;
-        }
-        $tryInOtherDirection = true;
-        $i = $i - 2;
-      }
-    }
-
-    return count($letters) + ($isPalindrome ? 3 : 0) + (!$isPalindrome && $isAlmostPalindrome ? 2 : 0);
   }
 
 }

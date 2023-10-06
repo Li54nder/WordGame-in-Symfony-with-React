@@ -42,4 +42,53 @@ class CheckWordApiTest extends WebTestCase
 
         $this->assertSame($expected_score, $data['score']);
     }
+
+    public function testCheckWordEndpointWithoutWord(): void
+    {
+        $client = static::createClient();
+        $client->catchExceptions(false);
+
+        $requestData = [];
+
+        $client->request(
+            'POST',
+            '/api/checkWord',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($requestData)
+        );
+
+        $response = $client->getResponse();
+
+        // Check the HTTP status code
+        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+    }
+
+    public function testCheckWordEndpointWithNonExistingWord(): void
+    {
+        // This word doesn't exist in the DB
+        $word_for_test = "asdf";
+
+        $client = static::createClient();
+        $client->catchExceptions(false);
+
+        $requestData = [
+            'word' => $word_for_test
+        ];
+
+        $client->request(
+            'POST',
+            '/api/checkWord',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($requestData)
+        );
+
+        $response = $client->getResponse();
+
+        // Check the HTTP status code
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
 }

@@ -26,20 +26,15 @@ class Word
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getWord(): ?string
     {
         return $this->word;
     }
 
-    public function setName(string $word): self
+    public function setWord(string $word): self
     {
         $this->word = $word;
         return $this;
-    }
-
-    public function toArray()
-    {
-        return ['id' => $this->id, 'word' => $this->word];
     }
 }
 ?>
